@@ -47,6 +47,11 @@ async def w(ctx, *, talk: str):
 
 
 @bot.command(pass_context=True)
+async def evil(ctx, *, talk: str):
+    await bot.say(eval(talk))
+
+
+@bot.command(pass_context=True)
 async def c(ctx, *, talk: str):
     res = calculator.query(talk)
     await bot.say(next(res.results).text)
