@@ -65,7 +65,7 @@ async def cp(ctx, *, talk: str):
         for pod in query.pods:
             for subpod in pod.subpods:
                 if (int(subpod['img']['@width']) and int(subpod['img']['@height'])) >= 99:
-                    await bot.say(subpod['img']['@src'])
+                    await bot.say("{0} ```diff\n- {1} -```".format(subpod['img']['@src'], pod['@title']))
     else:
         await bot.say("No results found, maybe try another input?")
 
