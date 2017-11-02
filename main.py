@@ -14,13 +14,13 @@ Commands\n
 .w Summary of a Wikipedia article\n
 .u Urban dictionary lookup\n
 .c Calculator using WolframAlpha\n 
+.cp Output images from input\n
 ```\n"""
 
 with open('token.txt', 'r') as TK:
     TOKEN = TK.readline().strip()
     WOLFRAM_ID = TK.readline().strip()
 COMMAND_PREFIX = "."
-
 
 # SET UP
 bot = commands.Bot(command_prefix=COMMAND_PREFIX)
@@ -31,7 +31,7 @@ calculator = wolframalpha.Client(WOLFRAM_ID)
 # ON READY -> PRINT BOT INFORMATION
 @bot.event
 async def on_ready():
-    print(f"Logged in as:\nUSER: {bot.user.name}\nID: {bot.user.id}\nDiscord V.{discord.__version__}\n")
+    print(f"-Logged in as-\nUSER: {bot.user.name}\nID: {bot.user.id}\nDiscord V.{discord.__version__}\n")
     await bot.change_presence(game=discord.Game(name='Type .h for help!'))
 
 
@@ -53,8 +53,21 @@ async def evil(ctx, *, talk: str):
 
 @bot.command(pass_context=True)
 async def c(ctx, *, talk: str):
-    res = calculator.query(talk)
-    await bot.say(next(res.results).text)
+    query = calculator.query(talk)
+    if query:
+        await bot.say(next(query.results).text)
+
+
+@bot.command(pass_context=True)
+async def cp(ctx, *, talk: str):
+    query = calculator.query(talk)
+    if len(query) > 1:
+        for pod in query.pods:
+            for subpod in pod.subpods:
+                if (int(subpod['img']['@width']) and int(subpod['img']['@height'])) >= 99:
+                    await bot.say(subpod['img']['@src'])
+    else:
+        await bot.say("No results found, maybe try another input?")
 
 
 @bot.command(pass_context=True)
